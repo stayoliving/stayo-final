@@ -1,0 +1,74 @@
+# Ignore environment variable files for both frontend and backend
+stayo/frontend/.env
+stayo/backend/.env
+#########################
+# Python/Django ignores #
+#########################
+venv*/
+env*/
+ENV*/
+.env
+.env.*
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*~
+*.pot
+*.pyc
+*.pyo
+*.sqlite3
+db.sqlite3
+local_settings.py
+.Python
+*.log
+*.bak
+.coverage
+.pytest_cache/
+.mypy_cache/
+media/
+static/
+staticfiles/
+migrations/*/__pycache__/
+
+# Ignore compiled urls.pyc files
+*urls.cpython*.pyc
+
+#########################
+# Node/React ignores    #
+#########################
+node_modules/
+frontend/node_modules/
+build/
+frontend/build/
+frontend/.env*
+.pnp
+.pnp.js
+.sass-cache/
+
+#########################
+# Editor/IDE ignores   #
+#########################
+.vscode/
+.idea/
+.history/
+
+#########################
+# OS-specific ignores  #
+#########################
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.cab
+*.msi
+*.msm
+*.msp
+
+#########################
+# Miscellaneous        #
+#########################
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

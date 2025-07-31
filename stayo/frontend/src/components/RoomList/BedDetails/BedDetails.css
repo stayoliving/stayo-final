@@ -1,0 +1,45 @@
+.bed-details-container {
+  padding: 3% 5% 2% 12%;
+}
+.room-card {
+  width: 180px;
+  padding: 16px;
+  background-color: #ebe7e7;
+  border-radius: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transform: rotate(-0.5deg);
+  font-family: "Segoe UI", sans-serif;
+}
+
+.room-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.room-subtext {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 4px;
+}
+
+.room-price {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.room-unit {
+  font-size: 13px;
+  font-weight: normal;
+  color: #555;
+}
+.room-card:hover {
+  background-color: #b6dcf2;
+}
+.amenity-container {
+  display: flex;
+}
+.amenity-name {
+  margin-left: 5px;
+  margin-top: -4px;
+}
