@@ -72,7 +72,7 @@ class PaymentSerializer(serializers.ModelSerializer):
             "amount",
             "payment_type",
             "for_month",
-            "timestamp",
+            "payment_date",
             "status",
         ]
         read_only_fields = ["id", "timestamp", "status", "user"]
