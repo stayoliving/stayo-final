@@ -12,8 +12,9 @@ export const getProperties = (): Promise<IPropertiesDetails> => {
 };
 
 export const getBedList = (propertyId: number): Promise<IBedDetails> => {
-  return apiRequest(`/api/properties/${propertyId}/beds/`, "GET");
+  return apiRequest(`/api/properties/${propertyId}/beds/?available=true`, "GET");
 };
+
 export const registerAccount = (
   payload: IRegisterAccountPayload,
 ): Promise<IRegisterAccountPayload> => {
@@ -36,4 +37,18 @@ export const createRazorpayOrder = (
     check_out_date,
     user,
   });
+};
+
+//Add verify payment endpoint
+// "razorpay_order_id",
+            // "razorpay_payment_id",
+            // "razorpay_signature",
+            // "bed",
+            // "check_in_date",
+            // "check_out_date",
+            // "user",
+export const verifyRazorpayPayment = (
+  payload: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string , bed: number, check_in_date: string, check_out_date: string, user?: number },
+): Promise<any> => {
+  return apiRequest("/api/verify-payment/", "POST", payload);
 };

@@ -16,10 +16,9 @@ const RoomTypeToggle: React.FC<RoomTypeToggleProps> = ({
   useEffect(() => {
     const availableBeds =
       bedDetails &&
-      Object.keys(bedDetails).filter(
-        (bedType) => bedDetails[bedType].length > 0,
+      Object.keys(bedDetails.beds).filter(
+        (bedType) => bedDetails.beds[bedType].length > 0,
       );
-    console.log("availableBeds====", availableBeds);
     if (availableBeds && availableBeds?.length > 0) {
       setSelected(availableBeds[0]);
       selectedSharingType(availableBeds[0]);
@@ -27,7 +26,6 @@ const RoomTypeToggle: React.FC<RoomTypeToggleProps> = ({
   }, [bedDetails]);
 
   const handleSharingType = (sharingType: string) => {
-    console.log("selectedSharingType===", sharingType);
     setSelected(sharingType);
     selectedSharingType(sharingType);
   };
@@ -35,12 +33,12 @@ const RoomTypeToggle: React.FC<RoomTypeToggleProps> = ({
   return (
     <Box display="flex" gap={2}>
       {bedDetails &&
-        Object.keys(bedDetails).map(
+          Object.keys(bedDetails?.beds).map(
           (bedType) =>
-            bedDetails[bedType].length > 0 && (
+            bedDetails?.beds[bedType].length > 0 && (
               <Button
                 key={bedType}
-                onClick={() => handleSharingType(bedType)}
+                onClick={() => handleSharingType(bedType as string)}
                 variant="contained"
                 disableElevation
                 className="room-type-btn"

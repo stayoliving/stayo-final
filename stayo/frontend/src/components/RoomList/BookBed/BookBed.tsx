@@ -20,7 +20,7 @@ import moment from 'moment';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import { useMemo } from 'react';
-import { createRazorpayOrder } from '../../services/homePageServices';
+import { createRazorpayOrder, verifyRazorpayPayment } from '../../services/homePageServices';
 
 import { useSelector } from 'react-redux';
 
@@ -78,8 +78,10 @@ const BookBed: React.FC<BookBedProps> = ({ bedDetails, onOpenSidebar }) => {
   const [loading, setLoading] = useState(false);
 
   const getSharingType = (sharingType: string) => {
+    console.log("selectedSharingType===", sharingType);
+    
     setSelectedRooms({});
-    const bedsAvailable = bedDetails && bedDetails[sharingType];
+    const bedsAvailable = bedDetails && bedDetails.beds[sharingType];
     setAvailableBeds(bedsAvailable ?? []);
   };
 
@@ -251,8 +253,28 @@ const BookBed: React.FC<BookBedProps> = ({ bedDetails, onOpenSidebar }) => {
                     const order = await createRazorpayOrder(
                       selectedBed.id,
                       checkInDate,
-                      checkOutDate
-                    );
+                      checkOutDate,
+                      user ? user.user.id : undefined,
+                    ).then(res => {
+                      console.log("Razorpay order response:", res);
+                      if (res.status === 201) {
+                          verifyRazorpayPayment({
+                            razorpay_order_id: "12345",
+                            razorpay_payment_id: "56789",
+                            razorpay_signature: "signature123",
+                            bed: selectedBed.id,
+                            check_in_date: checkInDate,
+                            check_out_date: checkOutDate,
+                            user: user ? user.user.id : undefined,
+                        } as any).then(data => {
+                          console.log("Payment verification response:", data);
+                          if (data.status !== 200) {
+                            throw new Error('Payment verification failed');
+                          }
+                        })
+                      }
+                      return res.data;
+                    });
                     console.log("Razorpay order created:", order);
                     setOpenDialog(false);
                     // Razorpay options

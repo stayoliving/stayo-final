@@ -4,16 +4,16 @@ import banner from "../../assets/images/banner.jpg";
 import "./HomePage.css";
 import { getProperties } from "../services/homePageServices";
 import PropertyRoomCard from "../PropertyCard/PropertyCard";
-import { IPropertiesDetails } from "../../types/homePageTypes";
+import { IProperties, IPropertiesDetails } from "../../types/homePageTypes";
 import { error } from "console";
 
 const HomePage = () => {
-  const [properties, setProperties] = useState<IPropertiesDetails>([]);
+  const [properties, setProperties] = useState<IProperties[]>([]);
   useEffect(() => {
     getProperties().then(
       (data) => {
         if (data) {
-          setProperties(data);
+          setProperties(data.properties);
         }
       },
       (error) => {

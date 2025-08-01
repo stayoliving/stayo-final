@@ -101,7 +101,7 @@ const BedDetails: React.FC<BedDetailsProps> = ({
           </Typography>
         </Grid>
         {bedDetails &&
-          Object.keys(bedDetails).map(
+          Object.keys(bedDetails.beds).map(
             (bedType) => (
               // bedDetails[bedType].length > 0 && (
               <Grid size={4}>
@@ -112,9 +112,10 @@ const BedDetails: React.FC<BedDetailsProps> = ({
                   <div className="room-subtext">starting from</div>
                   <div>
                     <span className="room-price">
-                      {bedDetails[bedType].length > 0 &&
+                      
+                      {bedDetails?.beds[bedType].length > 0 &&
                         Math.min(
-                          ...bedDetails[bedType].map((bed) =>
+                          ...bedDetails?.beds[bedType].map((bed) =>
                             parseFloat(bed.rent_amount),
                           ),
                         )}

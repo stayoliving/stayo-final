@@ -1,4 +1,10 @@
-export type IPropertiesDetails = IProperties[];
+//export type IPropertiesDetails = IProperties[];
+
+export interface IPropertiesDetails {
+  message: string
+  status_code: number
+  properties: IProperties[]
+}
 
 export interface IProperties {
   id: number;
@@ -26,20 +32,26 @@ export interface IBed {
 }
 
 export interface IBedDetails {
+  message: string
+  status_code: number
+  beds: IBedType
+}
+
+export interface IBedType {
   [key: string]: IBed[];
 }
 
 export interface IBed {
-  id: number;
-  room_number: string;
-  bed_number: number;
-  sharing_type: string;
-  gender_preference: string;
-  is_available: boolean;
-  rent_amount: string;
-  deposit_amount: string;
-  token_amount: string;
-  property: number;
+  id: number
+  room_number: string
+  bed_number: number
+  sharing_type: string
+  gender_preference: string
+  is_available: boolean
+  rent_amount: string
+  deposit_amount: string
+  token_amount: string
+  property: number
 }
 
 export interface IRegisterAccountPayload {
