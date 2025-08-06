@@ -1,6 +1,7 @@
 import {
   IBedDetails,
   IBedList,
+  IBookingDetails,
   ILoginAccountPayload,
   IPropertiesDetails,
   IRegisterAccountPayload,
@@ -11,8 +12,8 @@ export const getProperties = (): Promise<IPropertiesDetails> => {
   return apiRequest("/api/properties/", "GET");
 };
 
-export const getBedList = (propertyId: number): Promise<IBedDetails> => {
-  return apiRequest(`/api/properties/${propertyId}/beds/?available=true`, "GET");
+export const getBedList = (propertyId: number, param?: boolean): Promise<IBedDetails> => {
+  return apiRequest(`/api/properties/${propertyId}/beds/${param ? '?available=true':''}`, "GET");
 };
 
 export const registerAccount = (
@@ -51,4 +52,8 @@ export const verifyRazorpayPayment = (
   payload: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string , bed: number, check_in_date: string, check_out_date: string, user?: number },
 ): Promise<any> => {
   return apiRequest("/api/verify-payment/", "POST", payload);
+};
+
+export const getBookingDetails = (userMailId: string): Promise<IBookingDetails> => {
+  return apiRequest(`/api/bookingDetails/${userMailId}/`, "GET");
 };

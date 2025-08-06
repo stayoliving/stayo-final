@@ -7,6 +7,7 @@ export default function Header({ onOpenSidebar }: { onOpenSidebar?: () => void }
     { name: "Home", path: "/" },
     { name: "9096420463", path: "/about", type: "mobNo" },
     { name: "WhatsApp", path: "/", type: "whatsapp", phone: "9096420463" },
+    { name: "Pay Rent/Deposit", path: "/pay" },
     { name: "About Us", path: "/about" },
   ];
   return (

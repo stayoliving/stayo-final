@@ -21,6 +21,7 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ navItems, onOpenSidebar }) => {
   const user = useSelector((state: any) => state.user.userDetails);
+
   return (
     <AppBar position="static" elevation={0} sx={{ background: '#fff', color: '#222', boxShadow: '0 2px 8px 0 #e0e0e0' }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', minHeight: 72 }}>
@@ -28,7 +29,6 @@ const Navbar: React.FC<NavbarProps> = ({ navItems, onOpenSidebar }) => {
           <NavLink to="/">
             <img src={stayoLogo} alt="Stayo Logo" style={{ height: 56, width: 56, borderRadius: 12, marginRight: 16 }} />
           </NavLink>
-          <Typography variant="h6" sx={{ fontWeight: 700, letterSpacing: 1, color: '#00B0FF' }}>Stayo</Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           {navItems.map((item) => {
@@ -97,6 +97,7 @@ const Navbar: React.FC<NavbarProps> = ({ navItems, onOpenSidebar }) => {
                   background: isActive ? 'rgba(0,176,255,0.08)' : 'none',
                   transition: 'background 0.2s',
                 })}
+                
               >
                 {item.name}
               </NavLink>

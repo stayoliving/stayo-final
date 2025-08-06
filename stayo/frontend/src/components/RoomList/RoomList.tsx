@@ -14,16 +14,16 @@ const RoomList = ({ onOpenSidebar }: { onOpenSidebar?: () => void }) => {
   useEffect(() => {
     const propertyId = location.state?.id;
     setPropertyDetails(location.state);
-    getBedList(propertyId).then(
-      (data) => {
-        if (data) {
-          setBedList(data);
-        }
-      },
-      (error) => {
-        console.log("error=====", error);
-      },
-    );
+    // getBedList(propertyId, true).then(
+    //   (data) => {
+    //     if (data) {
+    //       setBedList(data);
+    //     }
+    //   },
+    //   (error) => {
+    //     console.log("error=====", error);
+    //   },
+    // );
   }, []);
   return (
     <>
@@ -31,13 +31,13 @@ const RoomList = ({ onOpenSidebar }: { onOpenSidebar?: () => void }) => {
         <div style={{ width: "56%" }}>
           <BedDetails
             propertyDetails={propertyDetails}
-            bedDetails={bedList}
+            // bedDetails={bedList}
           ></BedDetails>
         </div>
         <div className="room-details-form-container">
           <BookBed
             propertyDetails={propertyDetails}
-            bedDetails={bedList}
+            // bedDetails={bedList}
             onOpenSidebar={onOpenSidebar}
           />
         </div>

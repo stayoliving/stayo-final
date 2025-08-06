@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import "./BedDetails.css";
 import { IBedDetails, IProperties } from "../../../types/homePageTypes";
@@ -17,14 +17,16 @@ import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import LocalDrinkOutlinedIcon from "@mui/icons-material/LocalDrinkOutlined";
 import FitnessCenterOutlinedIcon from "@mui/icons-material/FitnessCenterOutlined";
 import BathtubOutlinedIcon from "@mui/icons-material/BathtubOutlined";
+import { getBedList } from "../../services/homePageServices";
 
 interface BedDetailsProps {
   propertyDetails: IProperties | undefined;
-  bedDetails: IBedDetails | undefined;
+  // bedDetails: IBedDetails | undefined;
 }
+
 const BedDetails: React.FC<BedDetailsProps> = ({
   propertyDetails,
-  bedDetails,
+  // bedDetails,
 }) => {
   const iconMap: Record<string, React.ElementType> = {
     LocalParkingIcon,
@@ -40,6 +42,21 @@ const BedDetails: React.FC<BedDetailsProps> = ({
     BathtubOutlinedIcon,
     // Add other mappings
   };
+const [bedDetails, setBedList] = useState<IBedDetails>();
+  useEffect(() => {
+      if (propertyDetails) {
+        getBedList(propertyDetails?.id).then(
+          (data) => {
+            if (data) {
+              setBedList(data);
+            }
+          },
+          (error) => {
+            console.log("error=====", error);
+          }
+        );
+      }
+    }, [propertyDetails]);
   const getAmenities = () =>
     aminitiesDetails.map((amenity, index) => {
       if (propertyDetails && propertyDetails.amenities.includes(amenity.name)) {
@@ -103,7 +120,7 @@ const BedDetails: React.FC<BedDetailsProps> = ({
         {bedDetails &&
           Object.keys(bedDetails.beds).map(
             (bedType) => (
-              // bedDetails[bedType].length > 0 && (
+              bedDetails?.beds[bedType].length > 0 && (
               <Grid size={4}>
                 <div className="room-card">
                   <div className="room-title">
@@ -124,8 +141,8 @@ const BedDetails: React.FC<BedDetailsProps> = ({
                   </div>
                 </div>
               </Grid>
+            )
             ),
-            // ),
           )}
         <Grid size={12}>
           <Typography variant="h5" style={{ marginTop: "15px" }} gutterBottom>

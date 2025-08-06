@@ -65,3 +65,12 @@ export interface ILoginAccountPayload {
   email: string;
   password: string;
 }
+
+export interface IBookingDetails {
+  id: number
+  bed_number: number
+  rent_amount: string
+  deposit_amount: string
+  token_amount: string
+  payment_type: string
+}

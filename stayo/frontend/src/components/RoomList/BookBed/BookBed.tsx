@@ -11,40 +11,49 @@ import {
 } from "@mui/material";
 import RoomTypeToggle from "../RoomTypeToggle/RoomTypeToggle";
 import { IBed, IBedDetails, IProperties } from "../../../types/homePageTypes";
-import { useState } from "react";
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import moment from 'moment';
-import MenuItem from '@mui/material/MenuItem';
-import TextField from '@mui/material/TextField';
-import { useMemo } from 'react';
-import { createRazorpayOrder, verifyRazorpayPayment } from '../../services/homePageServices';
+import { useEffect, useState } from "react";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import moment from "moment";
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
+import { useMemo } from "react";
+import {
+  createRazorpayOrder,
+  getBedList,
+  verifyRazorpayPayment,
+} from "../../services/homePageServices";
 
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
 interface BookBedProps {
   propertyDetails: IProperties | undefined;
-  bedDetails: IBedDetails | undefined;
+  // bedDetails: IBedDetails | undefined;
   onOpenSidebar?: () => void; // Add prop to open sidebar
 }
 
-const BookBed: React.FC<BookBedProps> = ({ bedDetails, onOpenSidebar }) => {
+const BookBed: React.FC<BookBedProps> = ({
+  propertyDetails,
+  // bedDetails,
+  onOpenSidebar,
+}) => {
   // Get user from Redux
   const user = useSelector((state: any) => state.user.userDetails);
   const [selectedRooms, setSelectedRooms] = useState<{
     [key: number]: boolean;
   }>({});
+  const [bedDetails, setBedList] = useState<IBedDetails>();
   const [availableBeds, setAvailableBeds] = useState<IBed[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
   // Allow check-in date: 1st–5th of any month up to 12 months ahead
   const today = moment();
   const checkInOptions: string[] = [];
   for (let i = 0; i < 12; i++) {
-    const m = today.clone().add(i, 'month');
+    const m = today.clone().add(i, "month");
     for (let d = 1; d <= 5; d++) {
-      checkInOptions.push(m.clone().date(d).format('YYYY-MM-DD'));
+      checkInOptions.push(m.clone().date(d).format("YYYY-MM-DD"));
     }
   }
   const [checkInDate, setCheckInDate] = useState(checkInOptions[0]);
@@ -53,13 +62,28 @@ const BookBed: React.FC<BookBedProps> = ({ bedDetails, onOpenSidebar }) => {
   const checkOutOptions: string[] = [];
   const checkInMoment = moment(checkInDate);
   for (let i = 1; i <= 12; i++) {
-    const m = checkInMoment.clone().add(i, 'month');
+    const m = checkInMoment.clone().add(i, "month");
     const daysInMonth = m.daysInMonth();
     for (let d = daysInMonth - 4; d <= daysInMonth; d++) {
-      checkOutOptions.push(m.clone().date(d).format('YYYY-MM-DD'));
+      checkOutOptions.push(m.clone().date(d).format("YYYY-MM-DD"));
     }
   }
   const [checkOutDate, setCheckOutDate] = useState(checkOutOptions[0]);
+
+  useEffect(() => {
+    if (propertyDetails) {
+      getBedList(propertyDetails?.id, true).then(
+        (data) => {
+          if (data) {
+            setBedList(data);
+          }
+        },
+        (error) => {
+          console.log("error=====", error);
+        }
+      );
+    }
+  }, [propertyDetails]);
 
   // When check-in date changes, reset check-out date to first valid option
   const handleCheckInDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,10 +91,10 @@ const BookBed: React.FC<BookBedProps> = ({ bedDetails, onOpenSidebar }) => {
     const newCheckInMoment = moment(e.target.value);
     const newCheckOutOptions: string[] = [];
     for (let i = 1; i <= 12; i++) {
-      const m = newCheckInMoment.clone().add(i, 'month');
+      const m = newCheckInMoment.clone().add(i, "month");
       const daysInMonth = m.daysInMonth();
       for (let d = daysInMonth - 4; d <= daysInMonth; d++) {
-        newCheckOutOptions.push(m.clone().date(d).format('YYYY-MM-DD'));
+        newCheckOutOptions.push(m.clone().date(d).format("YYYY-MM-DD"));
       }
     }
     setCheckOutDate(newCheckOutOptions[0]);
@@ -79,7 +103,7 @@ const BookBed: React.FC<BookBedProps> = ({ bedDetails, onOpenSidebar }) => {
 
   const getSharingType = (sharingType: string) => {
     console.log("selectedSharingType===", sharingType);
-    
+
     setSelectedRooms({});
     const bedsAvailable = bedDetails && bedDetails.beds[sharingType];
     setAvailableBeds(bedsAvailable ?? []);
@@ -92,13 +116,15 @@ const BookBed: React.FC<BookBedProps> = ({ bedDetails, onOpenSidebar }) => {
   };
   console.log(
     "selectedRooms=====",
-    bedDetails && Object.values(bedDetails).every((arr) => arr.length === 0),
+    bedDetails && Object.values(bedDetails).every((arr) => arr.length === 0)
   );
   const isNoData =
     bedDetails && Object.values(bedDetails).every((arr) => arr.length === 0);
   const isRoomSelected = Object.values(selectedRooms).some(Boolean);
   // Find the selected bed (room)
-  const selectedBed = availableBeds.find(bed => selectedRooms[bed.bed_number]);
+  const selectedBed = availableBeds.find(
+    (bed) => selectedRooms[bed.bed_number]
+  );
   return (
     <>
       {!isNoData ? (
@@ -146,7 +172,9 @@ const BookBed: React.FC<BookBedProps> = ({ bedDetails, onOpenSidebar }) => {
                 </FormControl>
               </Box>
               <Box>
-                <Typography fontWeight={600}>{`₹${bed.rent_amount}/month`}</Typography>
+                <Typography
+                  fontWeight={600}
+                >{`₹${bed.rent_amount}/month`}</Typography>
                 {bed.token_amount && (
                   <Typography fontSize={14} color="text.secondary">
                     Token: ₹{bed.token_amount}
@@ -171,7 +199,7 @@ const BookBed: React.FC<BookBedProps> = ({ bedDetails, onOpenSidebar }) => {
                 background: isRoomSelected ? "#00B0FF" : "#cbcece",
                 color: "#fff",
                 boxShadow: "none",
-                '&:hover': {
+                "&:hover": {
                   background: isRoomSelected ? "#0099cc" : "#cbcece",
                   boxShadow: "none",
                 },
@@ -183,7 +211,9 @@ const BookBed: React.FC<BookBedProps> = ({ bedDetails, onOpenSidebar }) => {
                 }
                 // Check Razorpay key before opening dialog
                 if (!process.env.REACT_APP_RAZORPAY_KEY_ID) {
-                  alert('Payment configuration error: Razorpay key is missing. Please contact support.');
+                  alert(
+                    "Payment configuration error: Razorpay key is missing. Please contact support."
+                  );
                   return;
                 }
                 setOpenDialog(true);
@@ -198,8 +228,12 @@ const BookBed: React.FC<BookBedProps> = ({ bedDetails, onOpenSidebar }) => {
             <DialogContent>
               {selectedBed ? (
                 <>
-                  <Typography>Room Number: {selectedBed.room_number}</Typography>
-                  <Typography>Token Amount: ₹{selectedBed.token_amount}</Typography>
+                  <Typography>
+                    Room Number: {selectedBed.room_number}
+                  </Typography>
+                  <Typography>
+                    Token Amount: ₹{selectedBed.token_amount}
+                  </Typography>
                   <Box mt={2} display="flex" gap={2}>
                     <TextField
                       select
@@ -209,9 +243,9 @@ const BookBed: React.FC<BookBedProps> = ({ bedDetails, onOpenSidebar }) => {
                       sx={{ minWidth: 180 }}
                       InputLabelProps={{ shrink: true }}
                     >
-                      {checkInOptions.map(date => (
+                      {checkInOptions.map((date) => (
                         <MenuItem key={date} value={date}>
-                          {moment(date).format('D MMMM YYYY')}
+                          {moment(date).format("D MMMM YYYY")}
                         </MenuItem>
                       ))}
                     </TextField>
@@ -219,13 +253,13 @@ const BookBed: React.FC<BookBedProps> = ({ bedDetails, onOpenSidebar }) => {
                       select
                       label="Check-out Date"
                       value={checkOutDate}
-                      onChange={e => setCheckOutDate(e.target.value)}
+                      onChange={(e) => setCheckOutDate(e.target.value)}
                       sx={{ minWidth: 180 }}
                       InputLabelProps={{ shrink: true }}
                     >
-                      {checkOutOptions.map(date => (
+                      {checkOutOptions.map((date) => (
                         <MenuItem key={date} value={date}>
-                          {moment(date).format('D MMMM YYYY')}
+                          {moment(date).format("D MMMM YYYY")}
                         </MenuItem>
                       ))}
                     </TextField>
@@ -248,30 +282,32 @@ const BookBed: React.FC<BookBedProps> = ({ bedDetails, onOpenSidebar }) => {
                   setLoading(true);
                   try {
                     if (!process.env.REACT_APP_RAZORPAY_KEY_ID) {
-                      throw new Error('Payment configuration error: Razorpay key is missing. Please contact support.');
+                      throw new Error(
+                        "Payment configuration error: Razorpay key is missing. Please contact support."
+                      );
                     }
                     const order = await createRazorpayOrder(
                       selectedBed.id,
                       checkInDate,
                       checkOutDate,
-                      user ? user.user.id : undefined,
-                    ).then(res => {
+                      user ? user.user.id : undefined
+                    ).then((res) => {
                       console.log("Razorpay order response:", res);
                       if (res.status === 201) {
-                          verifyRazorpayPayment({
-                            razorpay_order_id: "12345",
-                            razorpay_payment_id: "56789",
-                            razorpay_signature: "signature123",
-                            bed: selectedBed.id,
-                            check_in_date: checkInDate,
-                            check_out_date: checkOutDate,
-                            user: user ? user.user.id : undefined,
-                        } as any).then(data => {
+                        verifyRazorpayPayment({
+                          razorpay_order_id: "12345",
+                          razorpay_payment_id: "56789",
+                          razorpay_signature: "signature123",
+                          bed: selectedBed.id,
+                          check_in_date: checkInDate,
+                          check_out_date: checkOutDate,
+                          user: user ? user.user.id : undefined,
+                        } as any).then((data) => {
                           console.log("Payment verification response:", data);
                           if (data.status !== 200) {
-                            throw new Error('Payment verification failed');
+                            throw new Error("Payment verification failed");
                           }
-                        })
+                        });
                       }
                       return res.data;
                     });
@@ -282,26 +318,29 @@ const BookBed: React.FC<BookBedProps> = ({ bedDetails, onOpenSidebar }) => {
                       key: process.env.REACT_APP_RAZORPAY_KEY_ID,
                       amount: order.amount,
                       currency: order.currency,
-                      name: 'Stayo Booking',
-                      description: 'Token Payment',
+                      name: "Stayo Booking",
+                      description: "Token Payment",
                       order_id: order.razorpay_order_id,
                       handler: function (response: any) {
                         // TODO: Call backend to verify payment
-                        alert('Payment successful! Razorpay Payment ID: ' + response.razorpay_payment_id);
+                        alert(
+                          "Payment successful! Razorpay Payment ID: " +
+                            response.razorpay_payment_id
+                        );
                       },
                       prefill: {},
                       notes: order.notes || {},
-                      theme: { color: '#00B0FF' },
-                      method: 'upi',
+                      theme: { color: "#00B0FF" },
+                      method: "upi",
                       upi: {
-                        flow: 'collect',
+                        flow: "collect",
                       },
                     };
                     // @ts-ignore
                     const rzp = new window.Razorpay(options);
                     rzp.open();
                   } catch (err: any) {
-                    alert(err.message || 'Failed to create order');
+                    alert(err.message || "Failed to create order");
                   } finally {
                     setLoading(false);
                   }
@@ -310,7 +349,7 @@ const BookBed: React.FC<BookBedProps> = ({ bedDetails, onOpenSidebar }) => {
                 color="primary"
                 disabled={!selectedBed || loading}
               >
-                {loading ? 'Processing...' : 'Pay Token'}
+                {loading ? "Processing..." : "Pay Token"}
               </Button>
             </DialogActions>
           </Dialog>
